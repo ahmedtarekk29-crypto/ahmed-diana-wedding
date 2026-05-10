@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ahmed & Diana | OSA</title>
+    <meta
+      name="description"
+      content="OSA till Ahmed och Dianas bröllop den 26 september 2026."
+    />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-frame" aria-hidden="true"></div>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <p class="kicker">Nu börjar vårt för alltid</p>
+        <h1 id="page-title">
+          <span>Ahmed</span>
+          <em>&amp;</em>
+          <span>Diana</span>
+        </h1>
+        <p class="wedding-date">Lördag 26 september 2026</p>
+        <a class="scroll-cue" href="#info" aria-label="Scrolla till information">↓</a>
+      </section>
+
+      <section id="info" class="info-section" aria-label="Bröllopsinformation">
+        <div class="divider" aria-hidden="true"></div>
+
+        <p class="notice">Vänligen meddela oss senast den 1 augusti 2026</p>
+
+        <div class="countdown" aria-label="Tid kvar till bröllopet">
+          <div>
+            <strong id="daysLeft">00</strong>
+            <span>Dagar</span>
+          </div>
+          <div>
+            <strong id="hoursLeft">00</strong>
+            <span>Timmar</span>
+          </div>
+          <div>
+            <strong id="minutesLeft">00</strong>
+            <span>Minuter</span>
+          </div>
+        </div>
+
+        <article class="info-card">
+          <p class="kicker">Plats &amp; tid</p>
+          <h2>Grand Plaza Bröllop &amp; Konferens</h2>
+          <p>Säve Flygplatsväg 26, 423 73 Säve</p>
+          <hr />
+          <h3>Kl. 18:00</h3>
+          <p class="arrival-note">Vi önskar att alla är på plats i god tid</p>
+          <a
+            class="map-link"
+            href="https://www.google.com/maps/search/?api=1&query=S%C3%A4ve%20Flygplatsv%C3%A4g%2026%2C%20423%2073%20S%C3%A4ve"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Visa på karta
+          </a>
+        </article>
+      </section>
+
+      <section class="rsvp" aria-labelledby="form-title">
+        <div class="divider" aria-hidden="true"></div>
+
+        <div class="form-heading">
+          <p class="kicker">Anmälan</p>
+          <h2 id="form-title">O.S.A.</h2>
+        </div>
+
+        <form id="rsvp-form" novalidate>
+          <input type="hidden" id="inviteCode" name="inviteCode" />
+
+          <div id="entry-step">
+            <div class="counter-block">
+              <p class="kicker">Hur många kommer?</p>
+              <div class="counter">
+                <button type="button" class="counter-button" id="decreaseGuests" aria-label="Minska antal">
+                  −
+                </button>
+                <input
+                  id="guestCount"
+                  inputmode="numeric"
+                  min="0"
+                  name="guestCount"
+                  pattern="[0-9]*"
+                  required
+                  type="text"
+                  value="1"
+                  aria-label="Antal gäster"
+                />
+                <button type="button" class="counter-button" id="increaseGuests" aria-label="Öka antal">
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div id="guest-fields" class="guest-fields" aria-live="polite"></div>
+
+            <button type="button" class="primary-action" id="reviewButton">
+              Granska svar
+            </button>
+          </div>
+
+          <div id="review-step" class="review-step is-hidden">
+            <p class="review-title">Stämmer allt?</p>
+            <div id="review-list" class="review-list"></div>
+            <div class="review-actions">
+              <button type="button" class="secondary-action" id="editButton">Ändra</button>
+              <button type="submit" class="primary-action">Bekräfta</button>
+            </div>
+          </div>
+
+          <p id="form-status" role="status" aria-live="polite"></p>
+        </form>
+
+        <p class="footer-mark">Ahmed och Diana · 2026</p>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
