@@ -35,7 +35,7 @@
       <section id="info" class="info-section" aria-label="Bröllopsinformation">
         <div class="divider" aria-hidden="true"></div>
 
-        <p class="notice">Vänligen meddela oss senast den 1 augusti 2026</p>
+        <p class="notice">Vänligen meddela oss senast den 20 augusti 2026</p>
 
         <div class="countdown" aria-label="Tid kvar till bröllopet">
           <div>
@@ -58,6 +58,9 @@
           <p>Säve Flygplatsväg 26, 423 73 Säve</p>
           <hr />
           <h3>Kl. 18:00</h3>
+          <p class="child-note">
+            Barn är en gudagåva, men vi önskar ett barnfritt bröllop
+          </p>
           <p class="arrival-note">Vi önskar att alla är på plats i god tid</p>
           <a
             class="map-link"
@@ -78,51 +81,53 @@
           <h2 id="form-title">O.S.A.</h2>
         </div>
 
-        <form id="rsvp-form" novalidate>
-          <input type="hidden" id="inviteCode" name="inviteCode" />
+        <div class="rsvp-card">
+          <form id="rsvp-form" novalidate>
+            <input type="hidden" id="inviteCode" name="inviteCode" />
 
-          <div id="entry-step">
-            <div class="counter-block">
-              <p class="kicker">Hur många kommer?</p>
-              <div class="counter">
-                <button type="button" class="counter-button" id="decreaseGuests" aria-label="Minska antal">
-                  −
-                </button>
-                <input
-                  id="guestCount"
-                  inputmode="numeric"
-                  min="0"
-                  name="guestCount"
-                  pattern="[0-9]*"
-                  required
-                  type="text"
-                  value="1"
-                  aria-label="Antal gäster"
-                />
-                <button type="button" class="counter-button" id="increaseGuests" aria-label="Öka antal">
-                  +
-                </button>
+            <div id="entry-step">
+              <div class="counter-block">
+                <p class="kicker">Hur många kommer?</p>
+                <div class="counter">
+                  <button type="button" class="counter-button" id="decreaseGuests" aria-label="Minska antal">
+                    −
+                  </button>
+                  <input
+                    id="guestCount"
+                    inputmode="numeric"
+                    min="0"
+                    name="guestCount"
+                    pattern="[0-9]*"
+                    required
+                    type="text"
+                    value="1"
+                    aria-label="Antal gäster"
+                  />
+                  <button type="button" class="counter-button" id="increaseGuests" aria-label="Öka antal">
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <div id="guest-fields" class="guest-fields" aria-live="polite"></div>
+
+              <button type="button" class="primary-action" id="reviewButton">
+                Granska svar
+              </button>
+            </div>
+
+            <div id="review-step" class="review-step is-hidden">
+              <p class="review-title">Stämmer allt?</p>
+              <div id="review-list" class="review-list"></div>
+              <div class="review-actions">
+                <button type="button" class="secondary-action" id="editButton">Ändra</button>
+                <button type="submit" class="primary-action">Bekräfta</button>
               </div>
             </div>
 
-            <div id="guest-fields" class="guest-fields" aria-live="polite"></div>
-
-            <button type="button" class="primary-action" id="reviewButton">
-              Granska svar
-            </button>
-          </div>
-
-          <div id="review-step" class="review-step is-hidden">
-            <p class="review-title">Stämmer allt?</p>
-            <div id="review-list" class="review-list"></div>
-            <div class="review-actions">
-              <button type="button" class="secondary-action" id="editButton">Ändra</button>
-              <button type="submit" class="primary-action">Bekräfta</button>
-            </div>
-          </div>
-
-          <p id="form-status" role="status" aria-live="polite"></p>
-        </form>
+            <p id="form-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
 
         <p class="footer-mark">Ahmed och Diana · 2026</p>
       </section>
