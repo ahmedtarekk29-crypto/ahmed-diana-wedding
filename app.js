@@ -1,5 +1,6 @@
 const SUPABASE_URL = "https://hbokvtzxbqfsrfymiayl.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_7RobNUwWM8dj9QbczZvBCA_ByazarZl";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzMG7NwbYl0uVscfzv262STSD9PvJD-Lj0BwWLTIKvVZxGsIyTmm0BkT-GjGeLGGDj/exec";
 
 const WEDDING_DATE = new Date("2026-09-26T00:00:00+02:00");
 const MAX_GUESTS = 20;
@@ -25,6 +26,8 @@ const hasSupabaseConfig =
   SUPABASE_URL.startsWith("https://") &&
   SUPABASE_ANON_KEY.length > 30 &&
   window.supabase;
+
+const hasGoogleSheetsConfig = GOOGLE_SCRIPT_URL.startsWith("https://script.google.com/");
 
 const supabaseClient = hasSupabaseConfig
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -95,154 +98,3 @@ function getGuests(data, count) {
       first_name: data.get(`guest_${guestNumber}_firstName`).trim(),
       last_name: data.get(`guest_${guestNumber}_lastName`).trim(),
     };
-  });
-}
-
-function getFormPayload() {
-  const data = new FormData(form);
-  const guestCount = getGuestCount();
-  const guests = getGuests(data, guestCount);
-  const primaryGuest = guests[0] || null;
-
-  return {
-    invite_code: data.get("inviteCode") || null,
-    attending: guestCount > 0,
-    guest_count: guestCount,
-    guests,
-    contact_name: primaryGuest
-      ? `${primaryGuest.first_name} ${primaryGuest.last_name}`.trim()
-      : null,
-    page_url: window.location.href,
-    user_agent: navigator.userAgent,
-  };
-}
-
-function validatePayload(payload) {
-  if (payload.guest_count < 1) {
-    return "Skriv hur många som kommer.";
-  }
-
-  const missingName = payload.guests.some(
-    (guest) => !guest.first_name || !guest.last_name,
-  );
-
-  if (missingName) {
-    return "Fyll i förnamn och efternamn för varje gäst.";
-  }
-
-  return "";
-}
-
-function renderReview(payload) {
-  reviewList.replaceChildren();
-
-  payload.guests.forEach((guest, index) => {
-    const item = document.createElement("div");
-    item.className = "review-item";
-    item.innerHTML = `
-      <span class="review-label">Gäst ${index + 1}</span>
-      <span class="review-name">${guest.first_name} ${guest.last_name}</span>
-    `;
-    reviewList.append(item);
-  });
-}
-
-function updateCountdown() {
-  const now = new Date();
-  const diff = Math.max(0, WEDDING_DATE.getTime() - now.getTime());
-  const totalMinutes = Math.floor(diff / 60000);
-  const days = Math.floor(totalMinutes / 1440);
-  const hours = Math.floor((totalMinutes % 1440) / 60);
-  const minutes = totalMinutes % 60;
-
-  document.querySelector("#daysLeft").textContent = String(days).padStart(2, "0");
-  document.querySelector("#hoursLeft").textContent = String(hours).padStart(2, "0");
-  document.querySelector("#minutesLeft").textContent = String(minutes).padStart(2, "0");
-}
-
-function showEntryStep() {
-  entryStep.classList.remove("is-hidden");
-  reviewStep.classList.add("is-hidden");
-}
-
-function showReviewStep() {
-  entryStep.classList.add("is-hidden");
-  reviewStep.classList.remove("is-hidden");
-}
-
-guestCountInput.addEventListener("input", () => {
-  setStatus("");
-  renderGuestFields();
-});
-
-decreaseGuests.addEventListener("click", () => {
-  setStatus("");
-  setGuestCount(getGuestCount() - 1);
-});
-
-increaseGuests.addEventListener("click", () => {
-  setStatus("");
-  setGuestCount(getGuestCount() + 1);
-});
-
-reviewButton.addEventListener("click", () => {
-  const payload = getFormPayload();
-  const validationMessage = validatePayload(payload);
-
-  if (validationMessage) {
-    setStatus(validationMessage, "error");
-    return;
-  }
-
-  setStatus("");
-  renderReview(payload);
-  showReviewStep();
-});
-
-editButton.addEventListener("click", () => {
-  setStatus("");
-  showEntryStep();
-});
-
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  setStatus("");
-
-  const payload = getFormPayload();
-  const validationMessage = validatePayload(payload);
-
-  if (validationMessage) {
-    setStatus(validationMessage, "error");
-    showEntryStep();
-    return;
-  }
-
-  if (!supabaseClient) {
-    console.info("RSVP payload preview:", payload);
-    setStatus("Formuläret är klart. Koppla Supabase innan sidan publiceras.");
-    return;
-  }
-
-  submitButton.disabled = true;
-  setStatus("Skickar...");
-
-  const { error } = await supabaseClient.from("rsvps").insert(payload);
-
-  submitButton.disabled = false;
-
-  if (error) {
-    console.error(error);
-    setStatus("Något gick fel. Försök igen eller kontakta oss direkt.", "error");
-    return;
-  }
-
-  form.reset();
-  inviteCodeInput.value = params.get("invite") || "";
-  setGuestCount(1);
-  showEntryStep();
-  setStatus("Tack, ditt svar är registrerat.");
-});
-
-renderGuestFields();
-updateCountdown();
-setInterval(updateCountdown, 60000);
