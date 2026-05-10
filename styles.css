@@ -413,6 +413,11 @@ form {
   gap: 1.25rem;
 }
 
+.full-name-field {
+  width: min(100%, 30rem);
+  margin: 0 auto;
+}
+
 label {
   display: grid;
   gap: 0.65rem;
