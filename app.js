@@ -62,28 +62,16 @@ function renderGuestFields() {
     row.className = "guest-row";
     row.innerHTML = `
       <p class="guest-row-title">Gäst ${index}</p>
-      <div class="name-grid">
-        <label>
-          Förnamn
-          <input
-            autocomplete="given-name"
-            name="guest_${index}_firstName"
-            placeholder="Förnamn"
-            required
-            type="text"
-          />
-        </label>
-        <label>
-          Efternamn
-          <input
-            autocomplete="family-name"
-            name="guest_${index}_lastName"
-            placeholder="Efternamn"
-            required
-            type="text"
-          />
-        </label>
-      </div>
+      <label class="full-name-field">
+        För- och efternamn
+        <input
+          autocomplete="name"
+          name="guest_${index}_fullName"
+          placeholder="För- och efternamn"
+          required
+          type="text"
+        />
+      </label>
     `;
 
     guestFields.append(row);
@@ -93,12 +81,16 @@ function renderGuestFields() {
 function getGuests(data, count) {
   return Array.from({ length: count }, (_, index) => {
     const guestNumber = index + 1;
+    const fullName = data.get(`guest_${guestNumber}_fullName`).trim();
+    const nameParts = fullName.split(/\s+/).filter(Boolean);
+    const firstName = nameParts.shift() || "";
 
     return {
-      first_name: data.get(`guest_${guestNumber}_firstName`).trim(),
-      last_name: data.get(`guest_${guestNumber}_lastName`).trim(),
+      first_name: firstName,
+      last_name: nameParts.join(" "),
+      full_name: fullName,
     };
-    });
+  });
 }
 
 function getFormPayload() {
@@ -113,7 +105,7 @@ function getFormPayload() {
     guest_count: guestCount,
     guests,
     contact_name: primaryGuest
-      ? `${primaryGuest.first_name} ${primaryGuest.last_name}`.trim()
+      ? primaryGuest.full_name
       : null,
     page_url: window.location.href,
     user_agent: navigator.userAgent,
@@ -126,11 +118,11 @@ function validatePayload(payload) {
   }
 
   const missingName = payload.guests.some(
-    (guest) => !guest.first_name || !guest.last_name,
+    (guest) => !guest.full_name,
   );
 
   if (missingName) {
-    return "Fyll i förnamn och efternamn för varje gäst.";
+    return "Fyll i för- och efternamn för varje gäst.";
   }
 
   return "";
@@ -144,7 +136,7 @@ function renderReview(payload) {
     item.className = "review-item";
     item.innerHTML = `
       <span class="review-label">Gäst ${index + 1}</span>
-      <span class="review-name">${guest.first_name} ${guest.last_name}</span>
+      <span class="review-name">${guest.full_name}</span>
     `;
     reviewList.append(item);
   });
