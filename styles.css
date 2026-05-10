@@ -566,7 +566,7 @@ input::placeholder {
   .hero,
   .info-section,
   .rsvp {
-    min-height: auto;
+    min-height: 100svh;
     padding-block: 4.5rem;
   }
 
