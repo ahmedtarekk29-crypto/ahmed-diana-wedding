@@ -24,14 +24,9 @@ inviteCodeInput.value = params.get("invite") || "";
 
 const hasSupabaseConfig =
   SUPABASE_URL.startsWith("https://") &&
-  SUPABASE_ANON_KEY.length > 30 &&
-  window.supabase;
+  SUPABASE_ANON_KEY.length > 30;
 
 const hasGoogleSheetsConfig = GOOGLE_SCRIPT_URL.startsWith("https://script.google.com/");
-
-const supabaseClient = hasSupabaseConfig
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-  : null;
 
 function setStatus(message, tone = "info") {
   statusMessage.textContent = message;
@@ -142,20 +137,54 @@ function renderReview(payload) {
   });
 }
 
-async function sendToGoogleSheets(payload) {
+function sendToGoogleSheets(payload) {
   if (!hasGoogleSheetsConfig) return;
 
+  const body = JSON.stringify(payload);
+
   try {
-    await fetch(GOOGLE_SCRIPT_URL, {
+    if (navigator.sendBeacon) {
+      const queued = navigator.sendBeacon(
+        GOOGLE_SCRIPT_URL,
+        new Blob([body], { type: "text/plain;charset=utf-8" }),
+      );
+
+      if (queued) return;
+    }
+
+    void fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       mode: "no-cors",
+      keepalive: true,
       headers: {
         "Content-Type": "text/plain;charset=utf-8",
       },
-      body: JSON.stringify(payload),
+      body,
+    }).catch((error) => {
+      console.warn("Google Sheets sync failed:", error);
     });
   } catch (error) {
     console.warn("Google Sheets sync failed:", error);
+  }
+}
+
+async function sendToSupabase(payload) {
+  if (!hasSupabaseConfig) return;
+
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/rsvps`, {
+    method: "POST",
+    keepalive: true,
+    headers: {
+      "apikey": SUPABASE_ANON_KEY,
+      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+      "Content-Type": "application/json",
+      "Prefer": "return=minimal",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
   }
 }
 
@@ -229,32 +258,30 @@ form.addEventListener("submit", async (event) => {
     return;
   }
 
-  if (!supabaseClient) {
+  if (!hasSupabaseConfig) {
     console.info("RSVP payload preview:", payload);
     setStatus("Formuläret är klart. Koppla Supabase innan sidan publiceras.");
     return;
   }
 
   submitButton.disabled = true;
-  setStatus("Skickar...");
-
-  const { error } = await supabaseClient.from("rsvps").insert(payload);
-
-  submitButton.disabled = false;
-
-  if (error) {
-    console.error(error);
-    setStatus("Något gick fel. Försök igen eller kontakta oss direkt.", "error");
-    return;
-  }
-
-  await sendToGoogleSheets(payload);
-
   form.reset();
   inviteCodeInput.value = params.get("invite") || "";
   setGuestCount(1);
   showEntryStep();
   setStatus("Tack, ditt svar är registrerat.");
+  submitButton.disabled = false;
+
+  window.setTimeout(() => {
+    void sendToSupabase(payload)
+      .then(() => {
+        sendToGoogleSheets(payload);
+      })
+      .catch((error) => {
+        console.error(error);
+        setStatus("Något gick fel. Försök igen eller kontakta oss direkt.", "error");
+      });
+  }, 0);
 });
 
 renderGuestFields();
