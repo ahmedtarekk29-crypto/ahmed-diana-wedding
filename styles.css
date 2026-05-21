@@ -126,6 +126,8 @@ main {
 h1,
 h2,
 h3,
+.invitation-heading,
+.invitation-line,
 .notice,
 .review-title {
   font-family: "Cormorant Garamond", Georgia, serif;
@@ -190,6 +192,33 @@ h1 em {
   border-radius: 999px;
   background: var(--muted-soft);
   transform: translate(-50%, -50%);
+}
+
+.invitation-intro {
+  margin: 0 auto clamp(3rem, 6vw, 4.8rem);
+}
+
+.invitation-heading {
+  margin: 0 0 1rem;
+  color: var(--ink);
+  font-size: clamp(2.7rem, 5.2vw, 4.6rem);
+  font-style: italic;
+  line-height: 0.9;
+}
+
+.invitation-line {
+  margin: 0 auto;
+  color: var(--ink);
+  font-size: clamp(1.45rem, 2.6vw, 2.05rem);
+  line-height: 1.1;
+}
+
+.invitation-line span {
+  display: inline-block;
+  color: var(--accent);
+  font-size: 0.78em;
+  margin-left: 0.18em;
+  transform: translateY(-0.04em);
 }
 
 .notice {
@@ -325,6 +354,18 @@ h1 em {
 
 .form-heading {
   margin: 0 0 clamp(2rem, 5vw, 4rem);
+}
+
+.rsvp-deadline {
+  margin: 0 auto clamp(2.8rem, 6vw, 4.2rem);
+}
+
+.rsvp-deadline .notice {
+  margin-bottom: 2.2rem;
+}
+
+.rsvp-deadline .countdown {
+  margin-bottom: 0;
 }
 
 form {
@@ -609,6 +650,19 @@ input::placeholder {
     margin-bottom: 2.8rem;
   }
 
+  .invitation-intro {
+    margin-bottom: 2.6rem;
+  }
+
+  .invitation-heading {
+    margin-bottom: 0.8rem;
+    font-size: clamp(2.25rem, 11vw, 3.15rem);
+  }
+
+  .invitation-line {
+    font-size: clamp(1.28rem, 6vw, 1.75rem);
+  }
+
   .notice {
     margin-bottom: 2.2rem;
     font-size: clamp(1.2rem, 6vw, 1.65rem);
@@ -665,7 +719,15 @@ input::placeholder {
   }
 
   .form-heading {
-    margin-bottom: 2.2rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .rsvp-deadline {
+    margin-bottom: 2.4rem;
+  }
+
+  .rsvp-deadline .notice {
+    margin-bottom: 1.7rem;
   }
 
   form {
@@ -702,13 +764,48 @@ input::placeholder {
   }
 
   .name-grid,
-  .review-actions,
   .review-item {
     grid-template-columns: 1fr;
   }
 
+  .review-step {
+    gap: 1.45rem;
+  }
+
+  .review-title {
+    font-size: clamp(1.9rem, 9vw, 2.45rem);
+  }
+
+  .review-list {
+    gap: 0.85rem;
+    border: 0;
+  }
+
+  .review-item {
+    min-height: auto;
+    border: 1px solid rgba(121, 105, 84, 0.16);
+    background: rgba(255, 250, 242, 0.16);
+    padding: 1.15rem 0.85rem 1.25rem;
+  }
+
+  .review-item:last-child {
+    border-bottom: 1px solid rgba(121, 105, 84, 0.16);
+  }
+
+  .review-label {
+    text-align: center;
+  }
+
   .review-name {
-    text-align: left;
+    font-size: clamp(1.55rem, 7vw, 2rem);
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+    text-align: center;
+  }
+
+  .review-actions {
+    grid-template-columns: 1fr 1.2fr;
+    gap: 0.75rem;
   }
 
   .counter {
@@ -720,11 +817,6 @@ input::placeholder {
     min-height: 3.35rem;
     font-size: 0.82rem;
     letter-spacing: 0.22em;
-  }
-
-  .review-item {
-    min-height: auto;
-    padding: 1rem 0;
   }
 
   .footer-mark {
@@ -745,5 +837,9 @@ input::placeholder {
   .info-card,
   .rsvp-card {
     padding-inline: 0.9rem;
+  }
+
+  .review-actions {
+    grid-template-columns: 1fr;
   }
 }
